@@ -16,11 +16,15 @@ async function assert(value,label){if(!await value)throw Error('Failed: '+label)
 async function reset(){await evaluate('window.confirm=()=>true');await click('Reset Demo')}
 await command('Page.enable');await command('Runtime.enable');await command('Network.enable');
 await command('Page.navigate',{url:'http://127.0.0.1:4175/opspilot/#/try'});await new Promise(r=>setTimeout(r,1200));await evaluate('localStorage.clear()');await command('Page.reload');await new Promise(r=>setTimeout(r,1200));
+// Direct hash link and reload work on a plain static server.
+await command('Page.navigate',{url:'http://127.0.0.1:4175/opspilot/#/requests'});await new Promise(r=>setTimeout(r,1000));
+await assert(contains('All requests'),'direct requests link');await command('Page.reload');await new Promise(r=>setTimeout(r,1000));await assert(contains('All requests'),'direct link survives refresh');
+await click('Try a demo');
 // IT walkthrough.
 await click('Show next action',0);await click('Open example');await click('Show illustrative AI analysis');await click('Apply priority suggestion: High');await click('Submit request');
 await assert(contains('Automatically routed to IT') .then(v=>v||contains('routed to IT')),'incident submission and routing');await click('Advance 1 hour');await assert(contains('Escalated for attention'),'incident escalation');
 // Sequential purchase walkthrough.
-await reset();await evaluate('location.hash="#/try"');await pause();await click('Show next action',1);await click('Open approvals');await choose('Select demo user',3);await click('Approve Department Manager');await choose('Select demo user',4);await click('Approve Finance');await assert(contains('Purchase: Authorized'),'purchase authorization');
+await reset();await assert(evaluate("JSON.parse(localStorage.getItem('opspilot-demo-v1')).requests.length===2"),'reset restores seed data');await evaluate('location.hash="#/try"');await pause();await click('Show next action',1);await click('Open approvals');await choose('Select demo user',3);await click('Approve Department Manager');await choose('Select demo user',4);await click('Approve Finance');await assert(contains('Purchase: Authorized'),'purchase authorization');
 // Project walkthrough and durable completion.
 await reset();await evaluate('location.hash="#/try"');await pause();await click('Show next action',2);await click('Open workflow');await assert(contains('Blocked'),'blocked dependencies visible');await choose('Select demo user',5);
 for(const task of ['Marketing brief','Creative design','Compliance review','Landing page development','Quality assurance','Launch authorization']){

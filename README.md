@@ -1,4 +1,4 @@
-﻿# OpsPilot Demo
+# OpsPilot Demo
 
 A browser-local portfolio simulation of a fictional enterprise. The full OpsPilot application uses FastAPI, PostgreSQL, and OpenAI; this standalone demo does not contact them. Its simulated role selector is not authentication. Avoid entering real or sensitive information: browser storage is local to your browser and is not production persistence.
 
@@ -11,9 +11,27 @@ npm run dev
 
 Open the Vite URL under `/opspilot/`. `npm test` runs deterministic tests; `npm run build` produces static assets in `dist/`. No backend, database, environment file, or paid API calls are required.
 
-## Hosting in Astro and Netlify
+## Publish inside a static HTML portfolio
 
-Run `npm ci` and `npm run build`, then copy the **contents** of `dist/` into your Astro site's `public/opspilot/` directory. Deploy the Astro site normally to Netlify. Vite uses `/opspilot/` as its asset base and the demo uses hash routing, so `https://chasebenham.com/opspilot/#/requests` works after refresh without custom redirects. Do not publish the demo repository's source map or local browser data.
+The Vite production base is `/opspilot/` and the app uses hash routing. The build output is **`dist/`**; copy its contents into the portfolio's `opspilot/` folder, keeping its `assets/` subfolder intact. These commands modify the portfolio folder only when you run them.
+
+```powershell
+Set-Location 'C:\Users\chase\Documents\GitHub\opspilot-demo'
+npm ci
+if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
+npm test
+if ($LASTEXITCODE -ne 0) { throw 'Tests failed; nothing was copied.' }
+npm run build
+if ($LASTEXITCODE -ne 0) { throw 'Build failed; nothing was copied.' }
+$demoOutput = 'C:\Users\chase\Documents\GitHub\opspilot-demo\dist'
+$portfolioDemo = 'C:\Users\chase\Documents\Chase_Website\Website\opspilot'
+New-Item -ItemType Directory -Force -Path $portfolioDemo | Out-Null
+Copy-Item -Path (Join-Path $demoOutput '*') -Destination $portfolioDemo -Recurse -Force
+```
+
+After reviewing the copied files, commit and publish the HTML portfolio using its usual process. Link to `/opspilot/` from the portfolio. Hash URLs such as `/opspilot/#/requests` support navigation and refresh without server-side route rewrites. Test through an HTTP static server; opening HTML directly with `file://` cannot resolve the absolute asset paths.
+
+For future updates, repeat the test and build commands in the independent demo repository, copy the updated `dist/` contents, and republish the portfolio. Copying overwrites matching names but does not remove older hashed assets; review obsolete files in the portfolio's `opspilot/assets/` folder during deployment. Do not copy `node_modules`, the source tree, or local storage. No backend, API key, or paid service is needed.
 
 ## Scenarios and limitations
 
