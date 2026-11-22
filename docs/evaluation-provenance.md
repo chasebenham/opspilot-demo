@@ -1,0 +1,5 @@
+﻿# Evaluation pilot provenance
+
+The full-stack OpsPilot project recorded a small, explicitly authorized live integration check on 2026-11-21 (America/Phoenix), using three fictional IT incident cases from `meridian-synthetic-100-v2` with `gpt-6-luna`. The three responses passed schema validation and matched their pending request-type labels; two priority labels matched. There were no provider errors. Labels had not received independent human review. The three-case, single-category sample is not a representative model-performance measurement.
+
+This portfolio demo preserves those aggregate facts and the sanitized CRM response from synthetic case-02. The CRM text is exactly the fictional evaluation input; the output is replayed unchanged except that unused null extraction fields are omitted. The other four panels are authored illustrative examples. The demo contains no API credentials, private user requests or provider logs, and does not perform live AI evaluation. No accuracy percentage or real business outcome should be inferred from this pilot.
